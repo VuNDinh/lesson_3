@@ -112,7 +112,7 @@ def who_go_first
 end
 
 def game_flow(user, board)
-  user == 'Player' ? player_first(board) : computer_first(board)
+  user == USERS[0] ? player_first(board) : computer_first(board)
 end
 
 def player_first(board)
