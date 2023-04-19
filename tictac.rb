@@ -100,8 +100,15 @@ def computer_moves(board, marker)
   square.first
 end
 
-def computer_decision
-  USERS.sample
+def who_go_first
+  prompt("Who should go first? p for player, c for computer, r for random")
+  user = gets.chomp
+
+  case user
+  when 'p' then USERS[0]
+  when 'c' then USERS[1]
+  when 'r' then USERS.sample
+  end
 end
 
 def game_flow(user, board)
@@ -184,14 +191,7 @@ def display_rules
   MSG
 
   puts rules
-  sleep(6)
-end
-
-def display_who_first(user)
-  prompt("Let's see who is going first...")
-  sleep(2)
-  prompt("#{user} will go first!")
-  sleep(3)
+  sleep(5)
 end
 
 def display_winner(board)
@@ -215,12 +215,12 @@ loop do
   }
   loop do
     moves = board_moves
-    user_go_first = computer_decision
+    first_player = who_go_first
+    prompt("#{first_player} will go first!")
+    sleep(2)
 
-    display_who_first(user_go_first)
     display_board(moves)
-
-    game_flow(user_go_first, moves)
+    game_flow(first_player, moves)
 
     display_winner(moves)
     blank_line
@@ -241,8 +241,7 @@ loop do
 
   prompt("Do you want to play again? (y/n)")
   answer = gets.chomp
-  break unless answer.downcase.start_with?('y')
-  system 'clear'
+  break if answer.downcase.start_with?('n')
 end
 
 prompt("Thank you for playing Tic-Tac-Toe!")
