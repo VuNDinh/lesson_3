@@ -1,6 +1,6 @@
 CARDS = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 SUITS = ['Heart', 'Diamond', 'Club', 'Spade']
-USERS = ['Player', 'Computer']
+USERS = ['Player', 'Dealer']
 TARGET_NUM = 21
 DEALER_NUM_TO_STAY = 17
 VALID_INPUTS = ['hit', 'h', 'stay', 's']
@@ -27,8 +27,8 @@ end
 
 def initialize_scoreboard
   {
-    'Player' => 0,
-    'Dealer' => 0,
+    USERS[0] => 0,
+    USERS[1] => 0,
     'Tie' => 0
   }
 end
@@ -42,7 +42,7 @@ end
 
 def display_beginning_hand(hand)
   current_cards = value_and_suit(hand)
-  prompt("Dealer showing: #{current_cards.first} and unknown card")
+  prompt("#{USERS[1]} showing: #{current_cards.first} and unknown card")
 end
 
 # rubocop: disable Style/ConditionalAssignment
@@ -103,13 +103,13 @@ def get_player_total(deck, hand)
 
   loop do
     current_cards = value_and_suit(hand)
-    display_cards(joinand(current_cards), total_on_hand, 'Player')
+    display_cards(joinand(current_cards), total_on_hand, USERS[0])
     break if total_on_hand >= TARGET_NUM
     answer = hit_or_stay
     break if stay?(answer)
 
     card_received = deal_card!(deck)
-    prompt("You received: #{card_received.join(' of ')}")
+    prompt("#{USERS[0]} received: #{card_received.join(' of ')}")
     hand << card_received
 
     total_on_hand = calculate_total(hand)
@@ -120,30 +120,30 @@ def get_player_total(deck, hand)
 end
 
 def display_cards(hand, total, user)
-  if user == 'Player'
-    prompt("You have: #{hand}")
-    prompt("Your total: #{total}")
+  if user == USERS[0]
+    prompt("#{USERS[0]} have: #{hand}")
+    prompt("#{USERS[0]} total: #{total}")
   else
-    prompt("Dealer showing: #{hand}")
-    prompt("Dealer total: #{total}")
+    prompt("#{USERS[1]} showing: #{hand}")
+    prompt("#{USERS[1]} total: #{total}")
   end
 end
 
 def get_dealer_total(deck, hand)
   total_on_hand = calculate_total(hand)
   beginning_hand = hand.map(&:first)
-  display_cards(joinand(beginning_hand), total_on_hand, 'Dealer')
+  display_cards(joinand(beginning_hand), total_on_hand, USERS[1])
 
   while total_on_hand < DEALER_NUM_TO_STAY
     freeze_screen(2)
-    prompt("Dealer hit")
+    prompt("#{USERS[1]} hit")
     card_received = deal_card!(deck)
     hand << card_received
     freeze_screen(2)
-    prompt("Dealer received: #{card_received.join(' of ')}")
+    prompt("#{USERS[1]} received: #{card_received.join(' of ')}")
     freeze_screen(2)
     total_on_hand = calculate_total(hand)
-    prompt("Dealer total: #{total_on_hand}")
+    prompt("#{USERS[1]} total: #{total_on_hand}")
   end
 
   total_on_hand
@@ -161,17 +161,25 @@ def found_grand_winner?(scoreboard)
   !!grand_winner(scoreboard)
 end
 
+# rubocop: disable Style/EmptyElse
 def grand_winner(scoreboard)
-  scoreboard.key(5)
+  if scoreboard[USERS[0]] == 5
+    USERS[0]
+  elsif scoreboard[USERS[1]] == 5
+    USERS[1]
+  else
+    nil
+  end
 end
+# rubocop: enable Style/EmptyElse
 
 def display_score(scoreboard)
   clear_screen
 
   score = <<~MSG
   SCOREBOARD
-  Player: #{scoreboard['Player']}
-  Dealer: #{scoreboard['Dealer']}
+  Player: #{scoreboard[USERS[0]]}
+  Dealer: #{scoreboard[USERS[1]]}
   Tie: #{scoreboard['Tie']}
   MSG
 
@@ -191,16 +199,16 @@ end
 
 def display_bust_or_stay(total, user)
   if busted?(total)
-    prompt("#{user.capitalize} busted with #{total}.")
+    prompt("#{user} busted with #{total}.")
   else
-    prompt("#{user.capitalize} stayed at: #{total}")
+    prompt("#{user} stayed at: #{total}")
   end
 end
 
 def display_winner(winner)
   case winner
-  when 'Player' then prompt("You win!")
-  when 'Dealer' then prompt("Dealer win!")
+  when USERS[0] then prompt("Player win!")
+  when USERS[1] then prompt("Dealer win!")
   else prompt("It's a tie!")
   end
 end
@@ -211,13 +219,13 @@ end
 
 def detect_winner(player, dealer)
   if player > 21
-    'Dealer'
+    USERS[1]
   elsif dealer > 21
-    'Player'
+    USERS[0]
   elsif player > dealer
-    'Player'
+    USERS[0]
   elsif dealer > player
-    'Dealer'
+    USERS[1]
   else
     'Tie'
   end
@@ -280,14 +288,14 @@ loop do
 
     loop do
       player_total = get_player_total(deck, player_hand)
-      display_bust_or_stay(player_total, 'player')
+      display_bust_or_stay(player_total, USERS[0])
       display_separator
       break if busted?(player_total)
 
       freeze_screen(2)
       dealer_total = get_dealer_total(deck, dealer_hand)
       freeze_screen(2)
-      display_bust_or_stay(dealer_total, 'dealer')
+      display_bust_or_stay(dealer_total, USERS[1])
       display_separator
       freeze_screen(2)
 
