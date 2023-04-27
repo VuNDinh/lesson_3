@@ -103,7 +103,7 @@ def get_player_total(deck, hand)
 
   loop do
     current_cards = value_and_suit(hand)
-    display_cards(joinand(current_cards), total_on_hand, USERS[0])
+    display_cards(joinand(current_cards), total_on_hand, 'Player')
     break if total_on_hand >= TARGET_NUM
     answer = hit_or_stay
     break if stay?(answer)
@@ -132,7 +132,7 @@ end
 def get_dealer_total(deck, hand)
   total_on_hand = calculate_total(hand)
   beginning_hand = hand.map(&:first)
-  display_cards(joinand(beginning_hand), total_on_hand, USERS[1])
+  display_cards(joinand(beginning_hand), total_on_hand, 'Dealer')
 
   while total_on_hand < DEALER_NUM_TO_STAY
     freeze_screen(2)
