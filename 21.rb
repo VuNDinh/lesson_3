@@ -162,7 +162,7 @@ def found_grand_winner?(scoreboard)
 end
 
 def grand_winner(scoreboard)
-  scoreboard.key(2)
+  scoreboard.key(5)
 end
 
 def display_score(scoreboard)
