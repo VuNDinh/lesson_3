@@ -229,7 +229,7 @@ def display_rules
   rules = <<~MSG
   Welcome to Twenty-One!
   - You will be playing against a dealer
-  - Two cards will be dealt in the beginning
+  - Each player will receive two cards
   - You can only see one card from the dealer until your turn ended
   - The goal is to get to 21
   - If you bust (over 21), dealer win
