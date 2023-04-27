@@ -207,8 +207,8 @@ end
 
 def display_winner(winner)
   case winner
-  when USERS[0] then prompt("Player win!")
-  when USERS[1] then prompt("Dealer win!")
+  when USERS[0] then prompt("#{USERS[0]} win!")
+  when USERS[1] then prompt("#{USERS[1]} win!")
   else prompt("It's a tie!")
   end
 end
